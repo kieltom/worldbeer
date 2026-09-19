@@ -166,7 +166,7 @@
     </div>
     <div class="line">
       <div>Question processing fee<small>Waived. You asked nicely.</small></div>
-      <div class="mono">€0.00</div>
+      <div id="questionfee" class="mono">€2.50</div>
     </div>
     <div class="line total">
       <div>Total</div>
@@ -266,6 +266,7 @@
   var beer = document.getElementById('beer');
   var beerName = document.getElementById('beerName');
   var linePrice = document.getElementById('linePrice');
+  var questionFee = document.getElementById('questionfee');	
   var total = document.getElementById('total');
   var payBtn = document.getElementById('payBtn');
   var methods = document.querySelectorAll('.method');
@@ -277,6 +278,7 @@
     var parts = beer.value.split('|');
     current.name = parts[0];
     current.price = parseFloat(parts[1]);
+	var totalprice =current.price + parseFloat(questionFee);  
     beerName.textContent = current.name;
     linePrice.textContent = eur(current.price);
     total.textContent = eur(current.price);
