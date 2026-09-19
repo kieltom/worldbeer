@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secure payment - Worldbeer</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef1f5;
+    --card: #ffffff;
+    --ink: #17203a;
+    --muted: #5f6b83;
+    --line: #dde2ea;
+    --brand: #17203a;
+    --accent: #00a3ad;
+    --accent-dark: #007d85;
+    --ok: #1b8a4b;
+    --warn: #b45309;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  header.top {
+    background: var(--brand);
+    color: #fff;
+  }
+  .top-inner {
+    max-width: 960px; margin: 0 auto; padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .wordmark { font-weight: 700; font-size: 20px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+  .wordmark svg { width: 22px; height: 22px; }
+  .secure { font-size: 13px; opacity: .85; display: flex; align-items: center; gap: 6px; }
+  .secure svg { width: 14px; height: 14px; }
+
+  main {
+    max-width: 960px; margin: 24px auto 40px; padding: 0 16px;
+    display: grid; grid-template-columns: 1fr; gap: 16px;
+  }
+  @media (min-width: 800px) {
+    main { grid-template-columns: 340px 1fr; align-items: start; }
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px;
+  }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 0 0 12px; }
+  .merchant { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+
+  .line { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
+  .line:first-of-type { border-top: 0; }
+  .line small { display: block; color: var(--muted); font-size: 13px; }
+  .total { font-weight: 700; font-size: 18px; }
+
+  label.field { display: block; font-size: 13px; color: var(--muted); margin: 14px 0 6px; }
+  select {
+    width: 100%; padding: 11px 12px; font: inherit; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  }
+  select:focus-visible, button:focus-visible, .method:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .timer { margin-top: 16px; font-size: 13px; color: var(--warn); background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; }
+
+  .methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
+  @media (min-width: 520px) { .methods { grid-template-columns: repeat(3, 1fr); } }
+  .method {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 8px; border: 1.5px solid var(--line); border-radius: 8px; background: #fff;
+    font: inherit; font-size: 13px; color: var(--ink); cursor: pointer; min-height: 84px;
+  }
+  .method[aria-checked="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,163,173,.15); }
+  .badge { width: 44px; height: 28px; border-radius: 5px; display: grid; place-items: center; font-weight: 700; font-size: 11px; color: #fff; }
+  .b-bc { background: #005498; }
+  .b-visa { background: #1a1f71; }
+  .b-mc { background: linear-gradient(90deg, #eb001b 50%, #f79e1b 50%); }
+  .b-wero { background: #c2f24b; color: #17203a; }
+  .b-cash { background: #6b7280; }
+  .b-hop { background: #b7791f; }
+
+  .pay {
+    width: 100%; padding: 14px 16px; font: inherit; font-weight: 700; font-size: 16px;
+    color: #fff; background: var(--accent); border: 0; border-radius: 8px; cursor: pointer;
+  }
+  .pay:hover { background: var(--accent-dark); }
+  .pay:disabled { opacity: .6; cursor: progress; }
+  .fine { font-size: 12px; color: var(--muted); margin: 12px 0 0; text-align: center; }
+
+  .steps { display: none; text-align: center; padding: 28px 8px; }
+  .spinner {
+    width: 44px; height: 44px; margin: 0 auto 16px; border-radius: 50%;
+    border: 4px solid var(--line); border-top-color: var(--accent); animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
+  .steps p { margin: 4px 0; }
+  .steps .sub { color: var(--muted); font-size: 14px; }
+  .approve { margin-top: 16px; width: auto; padding: 12px 22px; }
+
+  .result { display: none; text-align: center; padding: 20px 8px; }
+  .tick { width: 56px; height: 56px; border-radius: 50%; background: #e6f6ed; color: var(--ok); display: grid; place-items: center; margin: 0 auto 12px; }
+  .tick svg { width: 28px; height: 28px; }
+  .answer { margin: 18px auto 0; max-width: 420px; text-align: left; border: 1px dashed var(--line); border-radius: 8px; padding: 14px 16px; background: #fafbfc; font-size: 14px; }
+  .answer strong { display: block; font-size: 22px; margin-top: 4px; }
+  .mono { font-variant-numeric: tabular-nums; }
+
+  .cookie {
+    position: fixed; left: 12px; right: 12px; bottom: 12px; max-width: 560px; margin: 0 auto;
+    background: var(--brand); color: #fff; border-radius: 10px; padding: 14px 16px; font-size: 14px;
+    display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    box-shadow: 0 6px 24px rgba(23,32,58,.3);
+  }
+  .cookie button { font: inherit; font-weight: 600; border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+  .cookie .yes { background: var(--accent); color: #fff; }
+  .cookie .no { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
+
+  footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--muted); font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="wordmark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 8c3-4 5-4 8 0s5 4 8 0 3-3 4-2"/><path d="M2 16c3-4 5-4 8 0s5 4 8 0 3-3 4-2"/></svg>
+      Worldbeer
+    </div>
+    <div class="secure">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      Secure payment page
+    </div>
+  </div>
+</header>
+
+<main>
+  <aside class="card" aria-labelledby="sum">
+    <h1 id="sum">Order summary</h1>
+    <p class="merchant">Merchant: The Presenter (Q&amp;A department)</p>
+
+    <div class="line">
+      <div>1 × Answer to your question<small id="beerName">Duvel 33 cl</small></div>
+      <div class="mono" id="linePrice">€4.50</div>
+    </div>
+    <div class="line">
+      <div>Question processing fee<small>Waived. You asked nicely.</small></div>
+      <div class="mono">€0.00</div>
+    </div>
+    <div class="line total">
+      <div>Total</div>
+      <div class="mono" id="total">€4.50</div>
+    </div>
+
+    <label class="field" for="beer">Choose your beer</label>
+    <select id="beer">
+      <option value="Duvel 33 cl|4.50" selected>Duvel: €4.50</option>
+      <option value="Westmalle Tripel 33 cl|5.00">Westmalle Tripel: €5.00</option>
+      <option value="Orval 33 cl|5.50">Orval: €5.50</option>
+      <option value="Chimay Blue 33 cl|5.00">Chimay Blue: €5.00</option>
+      <option value="Kwak 33 cl|4.80">Kwak (with the wooden holder): €4.80</option>
+      <option value="Delirium Tremens 33 cl|5.20">Delirium Tremens: €5.20</option>
+      <option value="Rochefort 10 33 cl|6.00">Rochefort 10: €6.00</option>
+    </select>
+
+    <div class="timer">Session expires in <span class="mono" id="timer">09:59</span>. Your question will then be answered with "it depends."</div>
+  </aside>
+
+  <section class="card" aria-live="polite">
+    <div id="pay-view">
+      <h2>Select your payment method</h2>
+      <div class="methods" role="radiogroup" aria-label="Payment method">
+        <button class="method" role="radio" aria-checked="true" data-m="Bancontact"><span class="badge b-bc">BC</span>Bancontact</button>
+        <button class="method" role="radio" aria-checked="false" data-m="Wero"><span class="badge b-wero">wero</span>Wero</button>
+        <button class="method" role="radio" aria-checked="false" data-m="Visa"><span class="badge b-visa">VISA</span>Visa</button>
+        <button class="method" role="radio" aria-checked="false" data-m="Mastercard"><span class="badge b-mc"></span>Mastercard</button>
+        <button class="method" role="radio" aria-checked="false" data-m="Cash"><span class="badge b-cash">€</span>Cash at the bar</button>
+        <button class="method" role="radio" aria-checked="false" data-m="Hops"><span class="badge b-hop">IOU</span>Pay later (hops)</button>
+      </div>
+      <button class="pay" id="payBtn" type="button">Pay €4.50</button>
+      <p class="fine">Demo page. No card details are asked, stored or sent anywhere. No money moves.</p>
+    </div>
+
+    <div class="steps" id="step-auth">
+      <div class="spinner" aria-hidden="true"></div>
+      <p><strong id="authTitle">Contacting your bank…</strong></p>
+      <p class="sub" id="authSub">Please do not close this page or drink your beer yet.</p>
+      <button class="pay approve" id="approveBtn" type="button" style="display:none">Approve in banking app</button>
+    </div>
+
+    <div class="result" id="step-done">
+      <div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></div>
+      <h2 style="font-size:20px">Payment authorised</h2>
+      <p class="sub" style="color:var(--muted);margin:0">Reference <span class="mono" id="ref">DUV-0000</span> · <span id="doneMethod">Bancontact</span> · <span id="doneAmount">€4.50</span></p>
+      <div class="answer">
+        Your answer, as promised:
+        <strong id="answerText">It depends.</strong>
+        <span style="color:var(--muted)">Show this screen to the presenter for a fuller explanation.</span>
+      </div>
+      <p class="fine">Beer status: <span id="beerStatus">pending delivery</span></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Parody page made for a conference talk about payments. Not affiliated with any payment provider. Nobody was charged.
+</footer>
+
+<div class="cookie" id="cookie" role="dialog" aria-label="Cookie notice">
+  <span>We use speculoos cookies to improve your checkout experience.</span>
+  <span>
+    <button class="no" id="cookieNo" type="button">Only necessary</button>
+    <button class="yes" id="cookieYes" type="button">Accept all</button>
+  </span>
+</div>
+
+<script>
+(function () {
+  var beer = document.getElementById('beer');
+  var beerName = document.getElementById('beerName');
+  var linePrice = document.getElementById('linePrice');
+  var total = document.getElementById('total');
+  var payBtn = document.getElementById('payBtn');
+  var methods = document.querySelectorAll('.method');
+  var current = { name: 'Duvel 33 cl', price: 4.5, method: 'Bancontact' };
+
+  function eur(n) { return '€' + n.toFixed(2); }
+
+  function refresh() {
+    var parts = beer.value.split('|');
+    current.name = parts[0];
+    current.price = parseFloat(parts[1]);
+    beerName.textContent = current.name;
+    linePrice.textContent = eur(current.price);
+    total.textContent = eur(current.price);
+    payBtn.textContent = 'Pay ' + eur(current.price);
+  }
+  beer.addEventListener('change', refresh);
+
+  methods.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      methods.forEach(function (b) { b.setAttribute('aria-checked', 'false'); });
+      btn.setAttribute('aria-checked', 'true');
+      current.method = btn.getAttribute('data-m');
+    });
+  });
+
+  // Session countdown
+  var left = 599;
+  var timerEl = document.getElementById('timer');
+  var tick = setInterval(function () {
+    left = Math.max(0, left - 1);
+    var m = String(Math.floor(left / 60)).padStart(2, '0');
+    var s = String(left % 60).padStart(2, '0');
+    timerEl.textContent = m + ':' + s;
+    if (left === 0) clearInterval(tick);
+  }, 1000);
+
+  // Cookie banner
+  function hideCookie() { document.getElementById('cookie').style.display = 'none'; }
+  document.getElementById('cookieYes').addEventListener('click', hideCookie);
+  document.getElementById('cookieNo').addEventListener('click', hideCookie);
+
+  // Flow
+  var payView = document.getElementById('pay-view');
+  var stepAuth = document.getElementById('step-auth');
+  var stepDone = document.getElementById('step-done');
+  var authTitle = document.getElementById('authTitle');
+  var authSub = document.getElementById('authSub');
+  var approveBtn = document.getElementById('approveBtn');
+
+  var authMessages = [
+    ['Contacting your bank…', 'Please do not close this page or drink your beer yet.'],
+    ['Running fraud checks…', 'Verifying that you are a thirsty human.'],
+    ['Confirming 3D Secure…', 'Your bank is asking if you really want a beer.']
+  ];
+
+  payBtn.addEventListener('click', function () {
+    payView.style.display = 'none';
+    stepAuth.style.display = 'block';
+    var i = 0;
+    authTitle.textContent = authMessages[0][0];
+    authSub.textContent = authMessages[0][1];
+    var iv = setInterval(function () {
+      i++;
+      if (i >= authMessages.length) {
+        clearInterval(iv);
+        document.querySelector('.spinner').style.display = 'none';
+        authTitle.textContent = 'Approval required';
+        authSub.textContent = 'Open your banking app and approve the payment of ' + eur(current.price) + ' to The Presenter.';
+        approveBtn.style.display = 'inline-block';
+        approveBtn.focus();
+        return;
+      }
+      authTitle.textContent = authMessages[i][0];
+      authSub.textContent = authMessages[i][1];
+    }, 1200);
+  });
+
+  var answers = [
+    'It depends.',
+    'Great question. Let\u2019s take it offline.',
+    'That\u2019s on the roadmap.',
+    'Works on my machine.',
+    'Have you tried turning it off and on again?'
+  ];
+
+  approveBtn.addEventListener('click', function () {
+    stepAuth.style.display = 'none';
+    stepDone.style.display = 'block';
+    var prefix = current.name.split(' ')[0].slice(0, 3).toUpperCase();
+    document.getElementById('ref').textContent = prefix + '-' + Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('doneMethod').textContent = current.method;
+    document.getElementById('doneAmount').textContent = eur(current.price);
+    document.getElementById('answerText').textContent = answers[Math.floor(Math.random() * answers.length)];
+    var status = {
+      'Cash': 'awaiting cash at the bar',
+      'Hops': 'IOU registered, interest accrues at 1 beer per month'
+    };
+    document.getElementById('beerStatus').textContent = status[current.method] || 'pending delivery, find the presenter';
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>
