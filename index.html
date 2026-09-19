@@ -151,6 +151,9 @@
   .cookie .yes:hover { filter: brightness(1.1); }
   .cookie .no { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
   .cookie .no:hover { background: rgba(255,255,255,.12); }
+  .cookie .monster { background: #2f6fd6; color: #fff; }
+  .cookie .monster:hover { filter: brightness(1.12); }
+  .cookie button:disabled { opacity: .6; cursor: default; }
 
   footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--muted); font-size: 12px; text-align: center; }
 </style>
@@ -242,8 +245,8 @@
         Your question:
         <p class="echo" id="echoQ"></p>
         Your answer, as promised:
-        <strong id="answerText">It depends.</strong>
-        <span style="color:var(--muted)">Show this screen to the presenter for a fuller explanation.</span>
+        <strong id="answerText" style="font-size:18px">It depends.</strong>
+        <span id="answerWhere" style="color:var(--muted)">Show this screen to the presenter for a fuller explanation.</span>
       </div>
       <p class="fine">Beer status: <span id="beerStatus">pending delivery</span></p>
       <p class="fine" id="sendStatus"></p>
@@ -257,10 +260,11 @@
 </footer>
 
 <div class="cookie" id="cookie" role="dialog" aria-label="Cookie notice">
-  <span>We use speculoos cookies to improve your checkout experience.</span>
-  <span>
+  <span id="cookieText">We use speculoos cookies to improve your checkout experience.</span>
+  <span style="display:flex; gap:8px; flex-wrap:wrap">
     <button class="no" id="cookieNo" type="button">Only necessary</button>
     <button class="yes" id="cookieYes" type="button">Accept all</button>
+    <button class="monster" id="cookieMonster" type="button">Cookie Monster wants them</button>
   </span>
 </div>
 
@@ -332,6 +336,11 @@
   function hideCookie() { document.getElementById('cookie').style.display = 'none'; }
   document.getElementById('cookieYes').addEventListener('click', hideCookie);
   document.getElementById('cookieNo').addEventListener('click', hideCookie);
+  document.getElementById('cookieMonster').addEventListener('click', function () {
+    document.getElementById('cookieText').textContent = 'OM NOM NOM NOM NOM… all cookies have been eaten.';
+    document.querySelectorAll('#cookie button').forEach(function (b) { b.disabled = true; });
+    setTimeout(hideCookie, 1800);
+  });
 
   // Flow
   var payView = document.getElementById('pay-view');
@@ -379,13 +388,40 @@
     }, 1200);
   });
 
-  var answers = [
+  // Answer depends on the selected beer (main answer) and the selected method (where it is delivered).
+  var beerAnswers = {
+    'Delirium Tremens': 'The answer will be much clearer after the second one. The pink elephants already know it.',
+    'Duvel': 'The devil is in the details, and the answer is: it depends.',
+    'Westmalle Tripel': 'A Trappist monk would tell you to reflect on it in silence for 40 days.',
+    'Brugse Zot': 'Only a fool gives a definitive answer. So: maybe.',
+    'Karmeliet': 'The answer comes in three parts: wheat, oats, barley. Part one: it depends.',
+    'Kwak': 'I will answer as soon as you leave a shoe as a deposit for the glass.',
+    'Rochefort 10': 'Strong beer, strong answer. Ask again tomorrow, if you remember.'
+  };
+  var fallbackAnswers = [
     'It depends.',
     'Great question. Let\u2019s take it offline.',
     'That\u2019s on the roadmap.',
-    'Works on my machine.',
-    'Have you tried turning it off and on again?'
+    'Works on my machine.'
   ];
+  var methodAnswers = {
+    'Half year highlights After Drink': {
+      where: 'The full explanation will be served at the Half Year Highlights After Drink.',
+      status: 'to be delivered at the Half Year Highlights After Drink'
+    },
+    'Meeting Room O': {
+      where: 'The full explanation will be served in Meeting Room O. Bring the beer.',
+      status: 'to be delivered in Meeting Room O'
+    },
+    'Bar of choice': {
+      where: 'The full explanation will be served at the bar of your choice. Keep your tab open.',
+      status: 'to be delivered at the bar of your choice'
+    }
+  };
+  function pickAnswer() {
+    var key = Object.keys(beerAnswers).filter(function (k) { return current.name.indexOf(k) === 0; })[0];
+    return key ? beerAnswers[key] : fallbackAnswers[Math.floor(Math.random() * fallbackAnswers.length)];
+  }
 
   approveBtn.addEventListener('click', function () {
     stepAuth.style.display = 'none';
@@ -394,12 +430,10 @@
     document.getElementById('ref').textContent = prefix + '-' + Math.floor(1000 + Math.random() * 9000);
     document.getElementById('doneMethod').textContent = current.method;
     document.getElementById('doneAmount').textContent = eur(current.total);
-    document.getElementById('answerText').textContent = answers[Math.floor(Math.random() * answers.length)];
-    var status = {
-      'Cash': 'awaiting cash at the bar',
-      'Hops': 'IOU registered, interest accrues at 1 beer per month'
-    };
-    document.getElementById('beerStatus').textContent = status[current.method] || 'pending delivery, find the presenter';
+    var m = methodAnswers[current.method];
+    document.getElementById('answerText').textContent = pickAnswer();
+    document.getElementById('answerWhere').textContent = m ? m.where : 'Show this screen to the presenter for a fuller explanation.';
+    document.getElementById('beerStatus').textContent = m ? m.status : 'pending delivery, find the presenter';
     document.getElementById('echoQ').textContent = question.value.trim();
     sendQuestion();
   });
