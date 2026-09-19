@@ -80,7 +80,8 @@
   .qmeta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin: 4px 0 10px; }
   .qerr { display: none; color: #b91c1c; font-size: 13px; margin: 0 0 10px; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-  .retry { display: none; margin-top: 8px; font: inherit; font-size: 13px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer; }
+  .retry { display: none; margin-top: 10px; font: inherit; font-size: 14px; font-weight: 600; padding: 9px 16px; color: var(--accent-dark); border: 1.5px solid var(--accent); border-radius: 8px; background: #fff; cursor: pointer; transition: background .15s, color .15s; }
+  .retry:hover { background: var(--accent); color: #fff; }
   .echo { color: var(--ink); font-style: italic; margin: 0 0 12px; word-break: break-word; }
 
   .timer { margin-top: 16px; font-size: 13px; color: var(--warn); background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; }
@@ -92,7 +93,14 @@
     padding: 14px 8px; border: 1.5px solid var(--line); border-radius: 8px; background: #fff;
     font: inherit; font-size: 13px; color: var(--ink); cursor: pointer; min-height: 84px;
   }
-  .method[aria-checked="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,163,173,.15); }
+  .method { position: relative; transition: border-color .15s, box-shadow .15s, background .15s, transform .15s; }
+  .method:hover { border-color: #9fd9dd; background: #f7fdfd; transform: translateY(-1px); }
+  .method:active { transform: translateY(0); }
+  .method[aria-checked="true"] { border-color: var(--accent); background: #effbfb; box-shadow: 0 0 0 3px rgba(0,163,173,.18); }
+  .method[aria-checked="true"]::after {
+    content: "\2713"; position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center;
+  }
   .badge { width: 44px; height: 28px; border-radius: 5px; display: grid; place-items: center; font-weight: 700; font-size: 11px; color: #fff; }
   .b-bc { background: #005498; }
   .b-visa { background: #1a1f71; }
@@ -102,11 +110,16 @@
   .b-hop { background: #b7791f; }
 
   .pay {
-    width: 100%; padding: 14px 16px; font: inherit; font-weight: 700; font-size: 16px;
-    color: #fff; background: var(--accent); border: 0; border-radius: 8px; cursor: pointer;
+    width: 100%; padding: 15px 18px; font: inherit; font-weight: 700; font-size: 16px; letter-spacing: .01em;
+    color: #fff; background: linear-gradient(135deg, #00b5bf 0%, #008b94 100%);
+    border: 0; border-radius: 10px; cursor: pointer;
+    box-shadow: 0 2px 0 rgba(0,90,96,.35), 0 8px 18px rgba(0,140,148,.28);
+    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
   }
-  .pay:hover { background: var(--accent-dark); }
-  .pay:disabled { opacity: .6; cursor: progress; }
+  .pay:hover { filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 3px 0 rgba(0,90,96,.35), 0 12px 22px rgba(0,140,148,.32); }
+  .pay:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(0,90,96,.35), 0 3px 8px rgba(0,140,148,.25); }
+  .pay:disabled { opacity: .6; cursor: progress; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .pay, .method { transition: none; } .pay:hover, .method:hover { transform: none; } }
   .fine { font-size: 12px; color: var(--muted); margin: 12px 0 0; text-align: center; }
 
   .steps { display: none; text-align: center; padding: 28px 8px; }
@@ -133,9 +146,11 @@
     display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;
     box-shadow: 0 6px 24px rgba(23,32,58,.3);
   }
-  .cookie button { font: inherit; font-weight: 600; border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
-  .cookie .yes { background: var(--accent); color: #fff; }
+  .cookie button { font: inherit; font-weight: 600; border: 0; border-radius: 8px; padding: 9px 16px; cursor: pointer; transition: filter .15s, background .15s; }
+  .cookie .yes { background: linear-gradient(135deg, #00b5bf, #008b94); color: #fff; }
+  .cookie .yes:hover { filter: brightness(1.1); }
   .cookie .no { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
+  .cookie .no:hover { background: rgba(255,255,255,.12); }
 
   footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--muted); font-size: 12px; text-align: center; }
 </style>
@@ -165,12 +180,12 @@
       <div class="mono" id="linePrice">€5.20</div>
     </div>
     <div class="line">
-      <div>Question processing fee<small>Waived. You asked nicely.</small></div>
+      <div>Question processing fee<small>Because good answers are not free.</small></div>
       <div id="questionfee" class="mono">€2.50</div>
     </div>
     <div class="line total">
       <div>Total</div>
-      <div class="mono" id="total">€4.50</div>
+      <div class="mono" id="total">€7.70</div>
     </div>
 
     <label class="field" for="beer">Choose your beer</label>
@@ -194,7 +209,9 @@
       <textarea id="question" rows="3" maxlength="500" placeholder="Type your question here"></textarea>
       <div class="qmeta"><span>Answered after payment</span><span><span id="qcount">0</span>/500</span></div>
       <p class="qerr" id="qerr" role="alert">Enter a question before paying. Free questions are not supported.</p>
-      <input class="txt" id="qname" type="text" maxlength="60" placeholder="Your name (optional)" autocomplete="off" style="margin-bottom:20px">
+      <input class="txt" id="qname" type="text" maxlength="60" placeholder="Your name (required)" autocomplete="name" required aria-required="true" aria-describedby="nameerr" style="margin-bottom:6px">
+      <p class="qerr" id="nameerr" role="alert">Enter your name so the presenter knows who to answer.</p>
+      <div style="height:14px"></div>
       <input class="hp" id="hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
 
       <h2>Select your payment method</h2>
@@ -206,8 +223,8 @@
         <button class="method" role="radio" aria-checked="false" data-m="Cash"><span class="badge b-cash">€</span>Cash at the bar</button>
         <button class="method" role="radio" aria-checked="false" data-m="Hops"><span class="badge b-hop">IOU</span>Pay later (hops)</button> -->
       </div>
-      <button class="pay" id="payBtn" type="button">Pay €4.50</button>
-      <p class="fine">Demo page. No card details are asked or stored. No money moves. Only your question, name (if given) and beer choice are sent to the presenter.</p>
+      <button class="pay" id="payBtn" type="button">Pay €7.70</button>
+      <p class="fine">Demo page. No card details are asked or stored. No money moves. Only your question, name and beer choice are sent to the presenter.</p>
     </div>
 
     <div class="steps" id="step-auth">
@@ -258,6 +275,8 @@
   var qerr = document.getElementById('qerr');
   var qcount = document.getElementById('qcount');
   var hp = document.getElementById('hp');
+  var nameerr = document.getElementById('nameerr');
+  qname.addEventListener('input', function () { nameerr.style.display = 'none'; });
   question.addEventListener('input', function () {
     qcount.textContent = question.value.length;
     qerr.style.display = 'none';
@@ -266,11 +285,14 @@
   var beer = document.getElementById('beer');
   var beerName = document.getElementById('beerName');
   var linePrice = document.getElementById('linePrice');
-  var questionFee = document.getElementById('questionfee');	
+  var questionFee = document.getElementById('questionfee');
+  // The fee is read from the #questionfee element, so you can change the amount in the HTML.
+  var feeAmount = parseFloat(questionFee.textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
   var total = document.getElementById('total');
   var payBtn = document.getElementById('payBtn');
   var methods = document.querySelectorAll('.method');
-  var current = { name: 'Delirium Tremens 33 cl', price: 5.20, method: 'Bancontact' };
+  var current = { name: 'Delirium Tremens 33 cl', price: 5.20, total: 5.20 + feeAmount,
+                  method: document.querySelector('.method[aria-checked="true"]').getAttribute('data-m') };
 
   function eur(n) { return '€' + n.toFixed(2); }
 
@@ -278,11 +300,12 @@
     var parts = beer.value.split('|');
     current.name = parts[0];
     current.price = parseFloat(parts[1]);
-	var totalprice =current.price + parseFloat(questionFee);  
+    current.total = current.price + feeAmount;
     beerName.textContent = current.name;
     linePrice.textContent = eur(current.price);
-    total.textContent = eur(current.price);
-    payBtn.textContent = 'Pay ' + eur(current.price);
+    questionFee.textContent = eur(feeAmount);
+    total.textContent = eur(current.total);
+    payBtn.textContent = 'Pay ' + eur(current.total);
   }
   beer.addEventListener('change', refresh);
 
@@ -330,6 +353,11 @@
       question.focus();
       return;
     }
+    if (!qname.value.trim()) {
+      nameerr.style.display = 'block';
+      qname.focus();
+      return;
+    }
     payView.style.display = 'none';
     stepAuth.style.display = 'block';
     var i = 0;
@@ -341,7 +369,7 @@
         clearInterval(iv);
         document.querySelector('.spinner').style.display = 'none';
         authTitle.textContent = 'Approval required';
-        authSub.textContent = 'Open your banking app and approve the payment of ' + eur(current.price) + ' to The Presenter.';
+        authSub.textContent = 'Open your banking app and approve the payment of ' + eur(current.total) + ' to The Presenter.';
         approveBtn.style.display = 'inline-block';
         approveBtn.focus();
         return;
@@ -365,7 +393,7 @@
     var prefix = current.name.split(' ')[0].slice(0, 3).toUpperCase();
     document.getElementById('ref').textContent = prefix + '-' + Math.floor(1000 + Math.random() * 9000);
     document.getElementById('doneMethod').textContent = current.method;
-    document.getElementById('doneAmount').textContent = eur(current.price);
+    document.getElementById('doneAmount').textContent = eur(current.total);
     document.getElementById('answerText').textContent = answers[Math.floor(Math.random() * answers.length)];
     var status = {
       'Cash': 'awaiting cash at the bar',
@@ -387,10 +415,12 @@
     statusEl.textContent = 'Delivering your question…';
     var payload = {
       question: question.value.trim(),
-      name: qname.value.trim() || '(anonymous)',
+      name: qname.value.trim(),
       beer: current.name,
       method: current.method,
-      amount: eur(current.price),
+      beer_price: eur(current.price),
+      question_fee: eur(feeAmount),
+      amount: eur(current.total),
       reference: document.getElementById('ref').textContent,
       _gotcha: hp.value
     };
