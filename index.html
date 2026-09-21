@@ -140,30 +140,24 @@
   .answer strong { display: block; font-size: 22px; margin-top: 4px; }
   .mono { font-variant-numeric: tabular-nums; }
 
- .cookie {
+.cookie {
   position: fixed; left: 12px; right: 12px; bottom: 12px; max-width: 560px; margin: 0 auto;
   background: var(--brand); color: #fff; border-radius: 10px; padding: 14px 16px; font-size: 14px;
   display: flex; gap: 12px; align-items: center;
   justify-content: center;   /* was: space-between */
-  text-align: center;        /* new: centers wrapped text */
+  text-align: center;        /* centers the text if it wraps */
   flex-wrap: wrap;
   box-shadow: 0 6px 24px rgba(23,32,58,.3);
 }
 
-/* new: text gets its own full-width row above the buttons */
-.cookie p,
-.cookie span {
+/* text row and button row each take a full-width line */
+.cookie > span {
   flex: 1 1 100%;
-  margin: 0;
 }
 
-/* new: centers the buttons if they're wrapped in a container */
-.cookie .actions {
-  display: flex;
-  gap: 12px;
+/* the fix: center the buttons inside their wrapper span */
+.cookie > span:last-child {
   justify-content: center;
-  flex-wrap: wrap;
-  flex: 1 1 100%;
 }
 
 .cookie button { font: inherit; font-weight: 600; border: 0; border-radius: 8px; padding: 9px 16px; cursor: pointer; transition: filter .15s, background .15s; }
