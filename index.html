@@ -194,13 +194,14 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
 
 	<label class="field" for="beer">Choose your beer</label>
     <select id="beer">
-	  <option value="Delirium Tremens 33 cl|5.20" selected>Delirium Tremens: €5.20</option>
-      <option value="Duvel 33 cl|4.50" >Duvel: €4.50</option>
-      <option value="Westmalle Tripel 33 cl|5.00">Westmalle Tripel: €5.00</option>
-      <option value="Brugse Zot 33 cl|5.50">Brugse Zot : €5.50</option>
-      <option value="Karmeliet 33 cl|5.00">Karmeliet: €5.00</option>
-      <option value="Kwak 33 cl|4.80">Kwak (with the wooden holder): €4.80</option>      
-      <option value="Rochefort 10 33 cl|6.00">Rochefort 10: €6.00</option>
+	  <option value="Delirium Tremens 33 cl|5.20" selected>Delirium Tremens - €5.20</option>
+      <option value="Duvel 33 cl|4.50" >Duvel - €4.50</option>
+      <option value="Tollebeek 33 cl|5.00">Tollebeek - €5.00</option>
+      <option value="Brugse Zot 33 cl|5.50">Brugse Zot - €5.50</option>
+      <option value="Karmeliet 33 cl|5.00">Karmeliet - €5.00</option>
+      <option value="Bon Secours 33 cl|5.80">Bon Secours - €4.80</option>      
+      <option value="Verzet 33 cl|6.00">Verzet - €6.00</option>
+		 <option value="Westmaal 33 cl|6.00">Westmalle - €6.00</option>
     </select>  
 
     <div class="line">
@@ -367,9 +368,9 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
   var approveBtn = document.getElementById('approveBtn');
 
   var authMessages = [
-    ['Contacting your bank…', 'Please do not close this page or drink your beer yet.'],
-    ['Running fraud checks…', 'Verifying that you are a thirsty human.'],
-    ['Confirming 3D Secure…', 'Your bank is asking if you really want a beer.']
+    ['Consulting Beer Intelligence™…', 'Converting hops into wisdom.'],
+    ['Analyzing the beer-to-answer exchange rate…', 'Current market conditions look favorable.'],
+    ['Confirming Beer Secure™…', 'Verifying that the presenter receives adequate refreshment.']
   ];
 
   payBtn.addEventListener('click', function () {
@@ -407,12 +408,13 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
   // Answer depends on the selected beer (main answer) and the selected method (where it is delivered).
   var beerAnswers = {
     'Delirium Tremens': 'The answer will be much clearer after the second one. The pink elephants already know it.',
-    'Duvel': 'The devil is in the details, and the answer is: it depends.',
-    'Westmalle Tripel': 'A Trappist monk would tell you to reflect on it in silence for 40 days.',
-    'Brugse Zot': 'Only a fool gives a definitive answer. So: maybe.',
-    'Karmeliet': 'The answer comes in three parts: wheat, oats, barley. Part one: it depends.',
-    'Kwak': 'I will answer as soon as you leave a shoe as a deposit for the glass.',
-    'Rochefort 10': 'Strong beer, strong answer. Ask again tomorrow, if you remember.'
+    'Duvel': 'The devil is in the details, ask againg tomorrow, if you remember.',
+    'Tollebeek': 'A duck wearing a waistcoat stole the answer, buried it under seventeen kilos of suspicious hay, and now claims diplomatic immunity.'
+    'Brugse Zot': 'Only a fool gives a definitive answer. So : maybe.',
+    'Karmeliet': 'Three grains whispered three secrets: wheat said "no", oats screamed, and barley turned into a flock of confused pigeons.',
+    'Bon Secours': 'Even the answer is praying this works.',
+    'Verzet': 'The answer threw a brick through the window of logic, declared itself a lawnmower, and escaped into the woods.',
+	'Westmalle': 'The monks knew the answer, but they have taken a vow of silence and replaced the explanation with seventeen increasingly aggressive bells.'
   };
   var fallbackAnswers = [
     'It depends.',
@@ -422,15 +424,15 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
   ];
   var methodAnswers = {
     'Half year highlights After Drink': {
-      where: 'The full explanation will be served at the Half Year Highlights After Drink.',
+      where: 'The full explanation will be discussed at the Half Year Highlights After Drink.',
       status: 'to be delivered at the Half Year Highlights After Drink'
     },
     'Meeting Room O': {
-      where: 'The full explanation will be served in Meeting Room O. Bring the beer.',
+      where: 'The full explanation will be discussed in Meeting Room O. Bring the beer.',
       status: 'to be delivered in Meeting Room O'
     },
     'Bar of choice': {
-      where: 'The full explanation will be served at the bar of your choice. Keep your tab open.',
+      where: 'The full explanation will be disscuessed at the bar of your choice. Keep your tab open.',
       status: 'to be delivered at the bar of your choice'
     }
   };
