@@ -86,28 +86,89 @@
 
   .timer { margin-top: 16px; font-size: 13px; color: var(--warn); background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; }
 
-  .methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
-  @media (min-width: 520px) { .methods { grid-template-columns: repeat(3, 1fr); } }
-  .method {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-    padding: 14px 8px; border: 1.5px solid var(--line); border-radius: 8px; background: #fff;
-    font: inherit; font-size: 13px; color: var(--ink); cursor: pointer; min-height: 84px;
-  }
-  .method { position: relative; transition: border-color .15s, box-shadow .15s, background .15s, transform .15s; }
-  .method:hover { border-color: #9fd9dd; background: #f7fdfd; transform: translateY(-1px); }
-  .method:active { transform: translateY(0); }
-  .method[aria-checked="true"] { border-color: var(--accent); background: #effbfb; box-shadow: 0 0 0 3px rgba(0,163,173,.18); }
-  .method[aria-checked="true"]::after {
-    content: "\2713"; position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%;
-    background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center;
-  }
-  .badge { width: 44px; height: 28px; border-radius: 5px; display: grid; place-items: center; font-weight: 700; font-size: 11px; color: #fff; }
-  .b-bc { background: #005498; }
-  .b-visa { background: #1a1f71; }
-  .b-mc { background: linear-gradient(90deg, #eb001b 50%, #f79e1b 50%); }
-  .b-wero { background: #c2f24b; color: #17203a; }
-  .b-cash { background: #6b7280; }
-  .b-hop { background: #b7791f; }
+  /* Payment method card styling */
+.methods { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 12px; 
+  margin-bottom: 18px; 
+}
+
+@media (min-width: 520px) { 
+  .methods { grid-template-columns: repeat(3, 1fr); } 
+}
+
+.method {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 10px;
+  padding: 16px 10px; 
+  border: 1.5px solid var(--line); 
+  border-radius: var(--radius); 
+  background: #fff;
+  font: inherit; 
+  font-size: 13px; 
+  font-weight: 500;
+  color: var(--ink); 
+  cursor: pointer; 
+  min-height: 100px;
+  text-align: center;
+  position: relative; 
+  transition: border-color .15s, box-shadow .15s, background .15s, transform .15s;
+}
+
+.method:hover { 
+  border-color: #9fd9dd; 
+  background: #f7fdfd; 
+  transform: translateY(-1px); 
+}
+
+.method:active { 
+  transform: translateY(0); 
+}
+
+.method[aria-checked="true"] { 
+  border-color: var(--accent); 
+  background: #effbfb; 
+  box-shadow: 0 0 0 3px rgba(0, 163, 173, 0.18); 
+}
+
+.method[aria-checked="true"]::after {
+  content: "\2713"; 
+  position: absolute; 
+  top: 8px; 
+  right: 8px; 
+  width: 20px; 
+  height: 20px; 
+  border-radius: 50%;
+  background: var(--accent); 
+  color: #fff; 
+  font-size: 12px; 
+  font-weight: 700; 
+  line-height: 20px; 
+  text-align: center;
+}
+
+/* Auto-resizing badge pills */
+.badge { 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 6px; 
+  font-weight: 700; 
+  font-size: 11px; 
+  line-height: 1.2;
+  color: #fff; 
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.b-bc   { background: #005498; }
+.b-visa { background: #1a1f71; }
+.b-wero { background: #c2f24b; color: #17203a; }
 
   .pay {
     width: 100%; padding: 15px 18px; font: inherit; font-weight: 700; font-size: 16px; letter-spacing: .01em;
@@ -235,15 +296,22 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
       <input class="hp" id="hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
 
       <h2>Select your payment method</h2>
-      <div class="methods" role="radiogroup" aria-label="Payment method">
-        <button class="method" role="radio" aria-checked="true" data-m="Half year highlights After Work Drink"><span class="badge b-bc">After Work Drink</span>Half Year Highlights After Work Drink</button>
-        <button class="method" role="radio" aria-checked="false" data-m="Meeting Room O"><span class="badge b-wero">Room O</span>Meeting Room O</button>
-        <button class="method" role="radio" aria-checked="false" data-m="Bar of choice"><span class="badge b-visa">Bar</span>Bar of choice</button>
-       <!-- <button class="method" role="radio" aria-checked="false" data-m="Mastercard"><span class="badge b-mc"></span>Mastercard</button>
-        <button class="method" role="radio" aria-checked="false" data-m="Cash"><span class="badge b-cash">€</span>Cash at the bar</button>
-        <button class="method" role="radio" aria-checked="false" data-m="Hops"><span class="badge b-hop">IOU</span>Pay later (hops)</button> -->
-      </div>
-      <button class="pay" id="payBtn" type="button">Pay €7.70</button>
+    <div class="methods" role="radiogroup" aria-label="Payment method">
+  <button class="method" role="radio" aria-checked="true" data-m="Half year highlights After Work Drink">
+    <span class="badge b-bc">After Work</span>
+    <span>Half Year Highlights After Work Drink</span>
+  </button>
+  
+  <button class="method" role="radio" aria-checked="false" data-m="Meeting Room O">
+    <span class="badge b-wero">Room O</span>
+    <span>Meeting Room O</span>
+  </button>
+  
+  <button class="method" role="radio" aria-checked="false" data-m="Bar of choice">
+    <span class="badge b-visa">Bar</span>
+    <span>Bar of choice</span>
+  </button>
+</div>    <button class="pay" id="payBtn" type="button">Pay €7.70</button>
       <p class="fine">Powered by the latest advances in Beer Intelligence™. 🍺 No card details, no payments, no money involved. Ask a question, pick a beer, and if the presenter approves of your beer choice, your question may be upgraded to premium support. 🍻 </p>
     </div>
 
@@ -409,7 +477,7 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
   var beerAnswers = {
     'Delirium Tremens': 'The answer will be much clearer after the second one. The pink elephants already know it.',
     'Duvel': 'The devil is in the details, ask againg tomorrow, if you remember.',
-    'Tollebeek': 'A duck wearing a waistcoat stole the answer, buried it under seventeen kilos of suspicious hay, and now claims diplomatic immunity.'
+    'Tollebeek': 'A duck wearing a waistcoat stole the answer, buried it under seventeen kilos of suspicious hay, and now claims diplomatic immunity.',
     'Brugse Zot': 'Only a fool gives a definitive answer. So : maybe.',
     'Karmeliet': 'Three grains whispered three secrets: wheat said "no", oats screamed, and barley turned into a flock of confused pigeons.',
     'Bon Secours': 'Even the answer is praying this works.',
@@ -423,7 +491,7 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
     'Works on my machine.'
   ];
   var methodAnswers = {
-    'Half year highlights After Drink': {
+    'Half year highlights After Work Drink': {
       where: 'The full explanation will be discussed at the Half Year Highlights After Drink.',
       status: 'to be delivered at the Half Year Highlights After Drink'
     },
