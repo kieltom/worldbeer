@@ -192,6 +192,17 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
     <h1 id="sum">Order summary</h1>
     <p class="merchant">Merchant: The Presenter (Q&amp;A department)</p>
 
+	<label class="field" for="beer">Choose your beer</label>
+    <select id="beer">
+	  <option value="Delirium Tremens 33 cl|5.20" selected>Delirium Tremens: €5.20</option>
+      <option value="Duvel 33 cl|4.50" >Duvel: €4.50</option>
+      <option value="Westmalle Tripel 33 cl|5.00">Westmalle Tripel: €5.00</option>
+      <option value="Brugse Zot 33 cl|5.50">Brugse Zot : €5.50</option>
+      <option value="Karmeliet 33 cl|5.00">Karmeliet: €5.00</option>
+      <option value="Kwak 33 cl|4.80">Kwak (with the wooden holder): €4.80</option>      
+      <option value="Rochefort 10 33 cl|6.00">Rochefort 10: €6.00</option>
+    </select>  
+
     <div class="line">
       <div>1 × Answer to your question<small id="beerName">Delirium Tremens 33 cl</small></div>
       <div class="mono" id="linePrice">€5.20</div>
@@ -205,16 +216,7 @@ footer { max-width: 960px; margin: 0 auto 32px; padding: 0 20px; color: var(--mu
       <div class="mono" id="total">€7.70</div>
     </div>
 
-    <label class="field" for="beer">Choose your beer</label>
-    <select id="beer">
-	  <option value="Delirium Tremens 33 cl|5.20" selected>Delirium Tremens: €5.20</option>
-      <option value="Duvel 33 cl|4.50" >Duvel: €4.50</option>
-      <option value="Westmalle Tripel 33 cl|5.00">Westmalle Tripel: €5.00</option>
-      <option value="Brugse Zot 33 cl|5.50">Brugse Zot : €5.50</option>
-      <option value="Karmeliet 33 cl|5.00">Karmeliet: €5.00</option>
-      <option value="Kwak 33 cl|4.80">Kwak (with the wooden holder): €4.80</option>      
-      <option value="Rochefort 10 33 cl|6.00">Rochefort 10: €6.00</option>
-    </select>
+    
 
     <div class="timer">Session expires in <span class="mono" id="timer">09:59</span>. Your question will then be answered with "it depends."</div>
   </aside>
